@@ -10,18 +10,18 @@ import org.apache.kafka.clients.producer._
 
 trait CompletionHandler extends Callback {
   val fn =
-    (onValue: Boolean) => 
+    (onValue: Option[Exception]) => 
       (onException: Exception) => 
         (action: Exception => Unit) => 
-          onValue match {
-            case true => action(onException)
-            case _    => // do nothing
+          onValue.isEmpty match {
+            case false => action(onException)
+            case true  => // do nothing
           }
 
   override def onCompletion(
     recordMetadata : RecordMetadata,
     e : Exception) {
-      fn(e != null)(e)
+      fn(Option(e))(e)
   }
 }
 
@@ -29,7 +29,7 @@ class RunUponCompletion(f: Exception => Unit) extends CompletionHandler {
   override def onCompletion(
     recordMetadata : RecordMetadata,
     e : Exception) {
-      fn(e != null)(e)(f)
+      fn(Option(e))(e)(f)
   }
 }
 

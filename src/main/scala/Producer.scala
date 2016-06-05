@@ -10,6 +10,15 @@ class Basmati[RK, RV](key : RK, value: RV) {
 
   private[this] val producer: KafkaProducer[RK,RV] = initProducer
 
+  //
+  // TODO:
+  // + Lift the brokers to a configuration
+  // + Lift the key/value serializer to a way that we can type-check
+  //   Currently, Kafka supports the following serializers and deserializers
+  //   + ByteArray
+  //   + ByteBuffer
+  //   + Double, Int, Long, String
+  //
   lazy val keysValues =
     Seq(("bootstrap.servers", "broker1:9092,broker2:9092"),
         ("key.serializer",    "org.apache.kafka.common.serialization.StringSerializer"),
@@ -29,6 +38,14 @@ class Basmati[RK, RV](key : RK, value: RV) {
   }
 
   val record = new ProducerRecord[RK, RV]("topic-a", key, value);
+
+  //
+  // TODO:
+  // + Send simple metrics of the sent data back to the platform
+  //   i.e. Leverage the Future[RecordMetadata] which is the result
+  //   object after a `send` is done.
+  //   Inside the `RecordMetadata` object, i can lift certain information
+  //   out for book-keeping, audit purposes e.g. serializedValueSize() / timestamp()
 
   producer.send(record, new RunUponCompletion( (e: Exception) => e.printStackTrace ))
 }

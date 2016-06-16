@@ -20,7 +20,7 @@ class Basmati[RK, RV](key : RK, value: RV) {
   //   + Double, Int, Long, String
   //
   lazy val keysValues =
-    Seq(("bootstrap.servers", "broker1:9092,broker2:9092"),
+    Seq(("bootstrap.servers", "localhost:9092,localhost:9093"),
         ("key.serializer",    "org.apache.kafka.common.serialization.StringSerializer"),
         ("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
         )
@@ -37,7 +37,7 @@ class Basmati[RK, RV](key : RK, value: RV) {
     new KafkaProducer[RK, RV](props)
   }
 
-  val record = new ProducerRecord[RK, RV]("topic-a", key, value);
+  val record = new ProducerRecord[RK, RV]("testAAAB", key, value);
 
   //
   // TODO:
